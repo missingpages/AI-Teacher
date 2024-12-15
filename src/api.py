@@ -160,10 +160,11 @@ def get_topic(section_name):
 def chat():
     data = request.json
     message = data.get('message', '')
+    context = data.get('context', {})
     
     try:
         # Get response from AI agent
-        ai_response = agent(message)
+        ai_response = agent(message, context)
         # print("ai response is",ai_response)
         # Store the conversation in chat history
         chat_messages.append({"user": message, "ai": ai_response})

@@ -84,9 +84,13 @@ main_layout = html.Div([
     ], fluid=True, className="cards-container", id='cards-container')
 ])
 
+# Add a dcc store to hold chat context
+context = dcc.Store(id='context', data={})
+
 # Add this layout definition
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
+    context,
     html.Div(id='page-content')
 ])
 
@@ -113,7 +117,7 @@ def update_cards(pathname):
             response = requests.get(f'{API_BASE_URL}/chapters')
             if response.status_code == 200:
                 chapters = response.json()
-                print("Received chapters:", chapters)  # Debug print
+                #print("Received chapters:", chapters)  # Debug print
                 
                 # Create flashcards from the chapters
                 flashcards = []
@@ -222,7 +226,8 @@ app.index_string = '''
 @app.callback(
     [Output('subject-title', 'children'),
      Output('topics-nav', 'children'),
-     Output('topic-content', 'children')],
+     Output('topic-content', 'children'), 
+     Output('context', 'data')],
     [Input('url', 'pathname')]
 )
 def update_page_content(pathname):
@@ -236,7 +241,7 @@ def update_page_content(pathname):
             # Fetch chapter data from API - Updated endpoint
             response = requests.get(f'{API_BASE_URL}/chapters/{chapter_name}')  # Changed from /subject/
             data = response.json()['result']
-            print("Received chapter data:", data)  # Debug print
+            #print("Received chapter data:", data)  # Debug print
             
             if data and 'error' not in data:
                 # Create navigation links for topics
@@ -279,14 +284,14 @@ def update_page_content(pathname):
                 
                 topic_content = create_topic_content(chapter_name, current_topic, prev_topic, next_topic)
                 
-                return chapter_name, nav_links, topic_content
+                return chapter_name, nav_links, topic_content, {'chapter': chapter_name, 'topic': current_topic.get('content')}
                 
         except Exception as e:
             print(f"Error in update_page_content: {str(e)}")  # Debug print
             traceback.print_exc()  # Add this for better error tracking
-            return f"Error: {chapter_name}", [], f"Error loading content: {str(e)}"
+            return f"Error: {chapter_name}", [], f"Error loading content: {str(e)}", {}
             
-    return "Topics", [], "Select a topic"
+    return "Topics", [], "Select a topic", {}
 
 def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
     content = current_topic.get('content', 'No content available')
@@ -493,16 +498,18 @@ topic_layout = html.Div([
     [Output('chat-messages', 'children'),
      Output('chat-input', 'value')],
     [Input('send-button', 'n_clicks')],
-    [State('chat-input', 'value')]
+    [State('chat-input', 'value'), State('context', 'data')]
 )
-def update_chat(n_clicks, message):
+def update_chat(n_clicks, message, data):
     if n_clicks is None or not message:
         return [], ''
     
+    print("Data in the store:", data)
+
     try:
         # Send message to API
         response = requests.post(f'{API_BASE_URL}/chat', 
-                               json={'message': message})
+                               json={'message': message, 'context': data})
         
         if response.status_code == 200:
             # Get updated chat history
@@ -529,7 +536,7 @@ def update_chat(n_clicks, message):
                             }
                         ),
                         html.Div(
-                            chat['ai'],
+                            dcc.Markdown(chat['ai']),
                             className='ai-message',
                             style={
                                 'textAlign': 'left',
