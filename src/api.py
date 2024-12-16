@@ -74,13 +74,13 @@ def get_chapters():
     
     try:
         results = execute_neo4j_query(query)
-        print("Raw Neo4j results:", results)  # Debug print
+        # print("Raw Neo4j results:", results)  # Debug print
         
         if results and len(results) > 0:
             chapters = results[0].get('chapters', [])
             # Filter out any null or empty chapters
             chapters = [chapter for chapter in chapters if chapter.get('chapter_name')]
-            print("Found chapters:", chapters)  # Debug print
+            # print("Found chapters:", chapters)  # Debug print
             return jsonify(chapters)
         
         print("No chapters found in database")  # Debug print
@@ -112,10 +112,10 @@ def get_chapter(chapter_name):
     try:
         # URL decode the chapter_name
         decoded_chapter_name = requests.utils.unquote(chapter_name)
-        print(f"Looking for chapter: {decoded_chapter_name}")  # Debug print
+        # print(f"Looking for chapter: {decoded_chapter_name}")  # Debug print
         
         results = execute_neo4j_query(query, {"chapter_name": decoded_chapter_name})
-        print("Raw Neo4j results:", results)  # Debug print
+        # print("Raw Neo4j results:", results)  # Debug print
         
         if results and len(results) > 0 and results[0] is not None:
             result = results[0]
@@ -145,7 +145,7 @@ def get_topic(section_name):
     try:
         # URL decode the section_name
         decoded_section_name = requests.utils.unquote(section_name)
-        print(f"Looking for section: {decoded_section_name}")  # Debug print
+        # print(f"Looking for section: {decoded_section_name}")  # Debug print
         
         results = execute_neo4j_query(query, {"section_name": decoded_section_name})
         if results and len(results) > 0:
@@ -161,7 +161,7 @@ def chat():
     data = request.json
     message = data.get('message', '')
     context = data.get('context', {})
-    
+    print("len of context is", len(context))
     try:
         # Get response from AI agent
         ai_response = agent(message, context)
@@ -192,7 +192,7 @@ def debug_chapters():
     
     try:
         results = execute_neo4j_query(query)
-        print("Debug - Raw chapter results:", results)
+        # print("Debug - Raw chapter results:", results)
         return jsonify(results[0] if results else {'error': 'No chapters found'})
     except Exception as e:
         print(f"Debug - Error: {str(e)}")

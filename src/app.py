@@ -149,10 +149,12 @@ app.index_string = '''
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <style>
             body {
-                background: linear-gradient(135deg, #9d174d, #4c1d95);
+                background: linear-gradient(35deg, #9d174d, #4c1d95);
                 min-height: 100vh;
                 margin: 0;
                 padding: 20px;
+                background-attachment: fixed;
+                background-size: cover;
             }
             .page-title {
                 font-family: 'Bebas Neue', sans-serif;
@@ -380,7 +382,7 @@ def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
                 formatted_content,
                 dangerously_allow_html=True,
                 style={
-                    'fontSize': '1.2rem',
+                    'fontSize': '1rem',
                     'lineHeight': '1.6',
                     'whiteSpace': 'pre-wrap',
                     'fontFamily': "'Ubuntu', sans-serif",
@@ -452,8 +454,14 @@ topic_layout = html.Div([
             
             # Updated right chat section
             dbc.Col([
-                html.Div([
-                    html.H3("Chat with AI Tutor", 
+                html.Div([ html.I(
+                            className="fas fa-robot",
+                            style={
+                                'color': 'white',
+                                'marginRight': '10px',
+                                'fontSize': '1.5rem'
+                            }),
+                    html.H3("AI Teacher", 
                            style={
                                'color': 'white',
                                'fontFamily': "'Bebas Neue', sans-serif",
