@@ -86,25 +86,127 @@ main_layout = html.Div([
 
 # Add a dcc store to hold chat context
 context = dcc.Store(id='context', data={})
+chapter_store = dcc.Store(id='chapter-store', data={})
 
-# Add this layout definition
+# Update app.layout to include both main and topic layouts
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
     context,
-    html.Div(id='page-content')
+    chapter_store,
+    # Main layout
+    html.Div(main_layout, id='main-content'),
+    # Topic layout - initially hidden
+    html.Div([
+        dbc.Container([
+            dbc.Row([
+                # Left sidebar with topics
+                dbc.Col([
+                    # Home button and subject title in a row
+                    dbc.Row([
+                        dbc.Col(
+                            dcc.Link(
+                                html.I(className="fas fa-home fa-2x"),
+                                href="/",
+                                style={
+                                    'color': 'white',
+                                    'textDecoration': 'none',
+                                    'marginRight': '15px'
+                                }
+                            ),
+                            width="auto"
+                        ),
+                        dbc.Col(
+                            html.H3(id="subject-title", 
+                                   className="mb-4",
+                                   style={
+                                       'color': 'white',
+                                       'fontFamily': "'Bebas Neue', sans-serif",
+                                       'letterSpacing': '2px'
+                                   }),
+                            width="auto"
+                        )
+                    ], className="mb-4", align="center"),
+                    
+                    # Topics nav with updated styles
+                    dbc.Nav(
+                        id="topics-nav",
+                        vertical=True,
+                        pills=True,
+                        className="flex-column topic-sidebar-nav",
+                        style={
+                            'width': '100%'
+                        }
+                    )
+                ], width=3, className="topic-sidebar", style={'padding': '20px'}),
+                
+                # Center content
+                dbc.Col([
+                    html.Div(id="topic-content", className="topic-content")
+                ], width=6),
+                
+                # Right chat section
+                dbc.Col([
+                    html.Div([
+                        html.I(
+                            className="fas fa-robot",
+                            style={
+                                'color': 'white',
+                                'marginRight': '10px',
+                                'fontSize': '1.5rem'
+                            }),
+                        html.H3("AI Teacher", 
+                               style={
+                                   'color': 'white',
+                                   'fontFamily': "'Bebas Neue', sans-serif",
+                                   'letterSpacing': '2px',
+                                   'marginBottom': '20px'
+                               }),
+                        html.Div(
+                            id="chat-messages",
+                            className="chat-messages",
+                            style={
+                                'height': 'calc(100vh - 250px)',
+                                'overflowY': 'auto',
+                                'padding': '10px',
+                                'backgroundColor': 'rgba(255, 255, 255, 0.1)',
+                                'borderRadius': '10px',
+                                'marginBottom': '20px'
+                            }
+                        ),
+                        dbc.Input(
+                            id="chat-input",
+                            placeholder="Type your question...",
+                            type="text",
+                            style={
+                                'marginBottom': '10px',
+                                'backgroundColor': 'rgba(255, 255, 255, 0.9)'
+                            }
+                        ),
+                        dbc.Button(
+                            "Send",
+                            id="send-button",
+                            color="light",
+                            className="w-100"
+                        )
+                    ], className="chat-section")
+                ], width=3)
+            ])
+        ], fluid=True)
+    ], id='topic-layout', style={'display': 'none'})
 ])
 
-# Update the display_page callback
+# Update the display_page callback to show/hide layouts
 @app.callback(
-    Output('page-content', 'children'),
+    [Output('main-content', 'style'),
+     Output('topic-layout', 'style')],
     [Input('url', 'pathname')]
 )
-def display_page(pathname):
+def toggle_layouts(pathname):
     if pathname == '/':
-        return main_layout
+        return {'display': 'block'}, {'display': 'none'}
     elif pathname.startswith('/subject/'):
-        return topic_layout
-    return html.Div('404 - Not found')
+        return {'display': 'none'}, {'display': 'block'}
+    return {'display': 'none'}, {'display': 'none'}
 
 # Add a new callback to populate the cards
 @app.callback(
@@ -212,6 +314,31 @@ app.index_string = '''
                 scroll-behavior: smooth;
             }
             /* Add all your other styles here */
+            .topic-sidebar-nav .nav-link {
+                color: white !important;
+                padding: 10px 15px !important;
+                margin: 5px 0 !important;
+                border-radius: 5px !important;
+                transition: all 0.2s ease-in-out !important;
+            }
+
+            .topic-sidebar-nav .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.15) !important;
+                transform: translateX(5px);
+            }
+
+            .topic-sidebar-nav .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.3) !important;
+            }
+
+            /* Remove any previous nav-link styles that might conflict */
+            .nav-pills .nav-link {
+                background: none !important;
+            }
+
+            .nav-pills .nav-link.active {
+                background-color: rgba(255, 255, 255, 0.3) !important;
+            }
         </style>
     </head>
     <body>
@@ -225,75 +352,117 @@ app.index_string = '''
 </html>
 '''
 
+# Add callback to load chapter data
 @app.callback(
-    [Output('subject-title', 'children'),
-     Output('topics-nav', 'children'),
-     Output('topic-content', 'children'), 
-     Output('context', 'data')],
+    [Output('chapter-store', 'data'),
+     Output('subject-title', 'children')],
     [Input('url', 'pathname')]
 )
-def update_page_content(pathname):
-    if pathname.startswith('/subject/'):
-        try:
-            # Extract chapter name from URL
-            chapter_name = pathname.split('/')[2]
-            chapter_name = requests.utils.unquote(chapter_name)
-            print(f"Fetching topics for chapter: {chapter_name}")  # Debug print
+def load_chapter_data(pathname):
+    if not pathname.startswith('/subject/'):
+        return {}, "Topics"
+    
+    try:
+        chapter_name = requests.utils.unquote(pathname.split('/')[2])
+        response = requests.get(f'{API_BASE_URL}/chapters/{chapter_name}')
+        data = response.json()['result']
+        
+        if data and 'error' not in data:
+            data['chapter_name'] = chapter_name  # Store chapter name in data
+            return data, chapter_name
             
-            # Fetch chapter data from API - Updated endpoint
-            response = requests.get(f'{API_BASE_URL}/chapters/{chapter_name}')  # Changed from /subject/
-            data = response.json()['result']
-            #print("Received chapter data:", data)  # Debug print
+    except Exception as e:
+        print(f"Error loading chapter data: {str(e)}")
+        traceback.print_exc()
+    
+    return {}, f"Error: {chapter_name}"
+
+# Update the callback to create navigation links
+@app.callback(
+    Output('topics-nav', 'children'),
+    [Input('chapter-store', 'data'),
+     Input('url', 'pathname')]  # Add pathname as an input
+)
+def update_topics_nav(chapter_data, pathname):
+    if not chapter_data:
+        return []
+    
+    chapter_name = chapter_data.get('chapter_name', '')
+    current_topic = None
+    
+    # Extract current topic from pathname if it exists
+    if pathname and len(pathname.split('/')) >= 5:
+        current_topic = requests.utils.unquote(pathname.split('/')[4])
+    
+    nav_links = [
+        dbc.NavLink(
+            topic['title'],
+            href=f"/subject/{requests.utils.quote(chapter_name)}/topic/{requests.utils.quote(topic['section_name'])}",
+            id=f"topic-link-{topic['section_name']}",
+            active=(topic['section_name'] == current_topic),  # Set active based on current topic
+            style={
+                'fontFamily': "'Ubuntu', sans-serif"
+            }
+        ) for topic in chapter_data.get('topics', [])
+    ]
+    return nav_links
+
+# Add callback to update topic content
+@app.callback(
+    [Output('topic-content', 'children'),
+     Output('context', 'data')],
+    [Input('url', 'pathname')],
+    [State('chapter-store', 'data')]
+)
+def update_topic_content(pathname, chapter_data):
+    if not pathname.startswith('/subject/') or not chapter_data:
+        return "Select a topic", {}
+    
+    try:
+        parts = pathname.split('/')
+        chapter_name = chapter_data.get('chapter_name', '')
+        topics = chapter_data.get('topics', [])
+        
+        # Default to first topic if no specific topic is selected
+        if len(parts) < 5 and topics:
+            current_topic = topics[0]
+            prev_topic = None
+            next_topic = topics[1] if len(topics) > 1 else None
             
-            if data and 'error' not in data:
-                # Create navigation links for topics
-                nav_links = [
-                    dbc.NavLink(
-                        topic['title'],  # Using title for display
-                        href=f"/subject/{requests.utils.quote(chapter_name)}/topic/{requests.utils.quote(topic['section_name'])}",
-                        id=f"topic-link-{topic['section_name']}",
-                        style={
-                            'color': 'white',
-                            'fontFamily': "'Ubuntu', sans-serif"
-                        }
-                    ) for topic in data.get('topics', [])
-                ]
-                
-                # Get section_name from URL or use first topic
-                parts = pathname.split('/')
-                topics = data.get('topics', [])
-                
-                if len(parts) >= 5:
-                    section_name = requests.utils.unquote(parts[4])
-                    
-                    # Find the current topic in the topics list
-                    current_topic = next(
-                        (t for t in topics if t['section_name'] == section_name),  # Changed from title to section_name
-                        topics[0] if topics else {'title': 'No topics available', 'content': ''}
-                    )
-                elif topics:
-                    current_topic = topics[0]
-                else:
-                    current_topic = {'title': 'No topics available', 'content': ''}
-                
-                # Find current topic index
-                current_index = next(
-                    (i for i, t in enumerate(topics) if t['section_name'] == current_topic['section_name']), 
-                    0
-                )
-                prev_topic = topics[current_index - 1] if current_index > 0 else None
-                next_topic = topics[current_index + 1] if current_index < len(topics) - 1 else None
-                
-                topic_content = create_topic_content(chapter_name, current_topic, prev_topic, next_topic)
-                
-                return chapter_name, nav_links, topic_content, {'chapter': chapter_name, 'topic': current_topic.get('content')}
-                
-        except Exception as e:
-            print(f"Error in update_page_content: {str(e)}")  # Debug print
-            traceback.print_exc()  # Add this for better error tracking
-            return f"Error: {chapter_name}", [], f"Error loading content: {str(e)}", {}
+            topic_content = create_topic_content(chapter_name, current_topic, prev_topic, next_topic)
+            return topic_content, {'chapter': chapter_name, 'topic': current_topic.get('content')}
+        
+        # Handle specific topic selection
+        if len(parts) >= 5:
+            section_name = requests.utils.unquote(parts[4])
             
-    return "Topics", [], "Select a topic", {}
+            # Find the current topic
+            current_topic = next(
+                (t for t in topics if t['section_name'] == section_name),
+                topics[0] if topics else {'title': 'No topics available', 'content': ''}
+            )
+        elif topics:
+            current_topic = topics[0]
+        else:
+            current_topic = {'title': 'No topics available', 'content': ''}
+        
+        # Find current topic index
+        current_index = next(
+            (i for i, t in enumerate(topics) if t['section_name'] == current_topic['section_name']),
+            0
+        )
+        
+        prev_topic = topics[current_index - 1] if current_index > 0 else None
+        next_topic = topics[current_index + 1] if current_index < len(topics) - 1 else None
+        
+        topic_content = create_topic_content(chapter_name, current_topic, prev_topic, next_topic)
+        
+        return topic_content, {'chapter': chapter_name, 'topic': current_topic.get('content')}
+        
+    except Exception as e:
+        print(f"Error updating topic content: {str(e)}")
+        traceback.print_exc()
+        return f"Error loading content: {str(e)}", {}
 
 def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
     content = current_topic.get('content', 'No content available')
@@ -403,104 +572,6 @@ def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
         )
     ])
 
-# Add this before your callbacks
-topic_layout = html.Div([
-    dbc.Container([
-        dbc.Row([
-            # Left sidebar with topics
-            dbc.Col([
-                # Home button and subject title in a row
-                dbc.Row([
-                    dbc.Col(
-                        dcc.Link(
-                            html.I(className="fas fa-home fa-2x"),
-                            href="/",
-                            style={
-                                'color': 'white',
-                                'textDecoration': 'none',
-                                'marginRight': '15px'
-                            }
-                        ),
-                        width="auto"
-                    ),
-                    dbc.Col(
-                        html.H3(id="subject-title", 
-                               className="mb-4",
-                               style={
-                                   'color': 'white',
-                                   'fontFamily': "'Bebas Neue', sans-serif",
-                                   'letterSpacing': '2px'
-                               }),
-                        width="auto"
-                    )
-                ], className="mb-4", align="center"),
-                
-                # Topics nav with updated styles
-                dbc.Nav(
-                    id="topics-nav",
-                    vertical=True,
-                    pills=True,
-                    className="flex-column",
-                    style={
-                        'color': 'white'
-                    }
-                )
-            ], width=3, className="topic-sidebar"),
-            
-            # Center content
-            dbc.Col([
-                html.Div(id="topic-content", className="topic-content")
-            ], width=6),
-            
-            # Updated right chat section
-            dbc.Col([
-                html.Div([ html.I(
-                            className="fas fa-robot",
-                            style={
-                                'color': 'white',
-                                'marginRight': '10px',
-                                'fontSize': '1.5rem'
-                            }),
-                    html.H3("AI Teacher", 
-                           style={
-                               'color': 'white',
-                               'fontFamily': "'Bebas Neue', sans-serif",
-                               'letterSpacing': '2px',
-                               'marginBottom': '20px'
-                           }),
-                    html.Div(
-                        id="chat-messages",
-                        className="chat-messages",
-                        style={
-                            'height': 'calc(100vh - 250px)',
-                            'overflowY': 'auto',
-                            'padding': '10px',
-                            'backgroundColor': 'rgba(255, 255, 255, 0.1)',
-                            'borderRadius': '10px',
-                            'marginBottom': '20px'
-                        }
-                    ),
-                    dbc.Input(
-                        id="chat-input",
-                        placeholder="Type your question...",
-                        type="text",
-                        style={
-                            'marginBottom': '10px',
-                            'backgroundColor': 'rgba(255, 255, 255, 0.9)'
-                        }
-                    ),
-                    dbc.Button(
-                        "Send",
-                        id="send-button",
-                        color="light",
-                        className="w-100"
-                    )
-                ], className="chat-section")
-            ], width=3)
-        ])
-    ], fluid=True)
-])
-
 # Add these callbacks for chat functionality
 @app.callback(
     [Output('chat-messages', 'children'),
@@ -536,7 +607,7 @@ def update_chat(n_clicks, message, data):
                                 'textAlign': 'right',
                                 'margin': '10px',
                                 'padding': '10px',
-                                'backgroundColor': '#be185d',
+                                'backgroundColor': '#601B83',
                                 'color': 'white',
                                 'borderRadius': '10px',
                                 'maxWidth': '80%',
@@ -591,6 +662,34 @@ def update_chat(n_clicks, message, data):
             word-wrap: break-word;
             margin-bottom: 10px;
         }
+        .topic-nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            text-decoration: none;
+        }
+        
+        /* Topic navigation styles */
+        .nav-link {
+            color: white !important;
+            transition: all 0.3s ease !important;
+            position: relative !important;
+            z-index: 1 !important;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+            text-decoration: none !important;
+        }
+        
+        .nav-pills .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.3) !important;
+        }
+        
+        /* Remove any previous .topic-nav-link styles */
     </style>
 '''
 
