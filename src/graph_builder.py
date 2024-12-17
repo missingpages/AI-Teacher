@@ -7,6 +7,10 @@ from state import State
 from langchain_core.messages import AIMessage
 from langchain_core.tools import tool
 
+from langgraph.checkpoint.memory import MemorySaver
+
+memory = MemorySaver()
+
 from langgraph.prebuilt import ToolNode
 def build_graph():
     graph_builder = StateGraph(State)
@@ -17,7 +21,7 @@ def build_graph():
     graph_builder.add_conditional_edges("chatbot", router)
     graph_builder.add_edge("tools", "chatbot")
     
-    graph = graph_builder.compile()
+    graph = graph_builder.compile(checkpointer=memory)
     return graph
 
 

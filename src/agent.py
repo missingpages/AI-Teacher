@@ -1,5 +1,7 @@
 from graph_builder import build_graph
 from prompts import *
+from langgraph.checkpoint.memory import MemorySaver
+
 
 import json
 from random import choice
@@ -10,7 +12,7 @@ with open("../profiles/students.json", "r") as f:
 student = choice(data)
 persona = student['persona']
 
-
+memory = MemorySaver()
 # def agent(message: str, context: dict={}):
 #     graph = build_graph()
 #     print("user message is",message)
@@ -43,7 +45,7 @@ def agent(message: str, context: dict={}):
     topic ={"role": "system", "content": context["topic"]}
     user_message = {"role": "user", "content": message}
     msg = {"messages": [topic, user_message]}
-    response = graph.invoke(msg)
+    response = graph.invoke(msg,{"configurable": {"thread_id": "1"}})
     print("response is", response)
     response = response["messages"][-1].content
     # print("agent response is", response)
