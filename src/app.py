@@ -587,8 +587,6 @@ def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
 def update_chat(n_clicks, message, data):
     if n_clicks is None or not message:
         return [], ''
-    
-    print("Data in the store:", data)
 
     try:
         # Send message to API
