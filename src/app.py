@@ -323,12 +323,13 @@ app.index_string = '''
             }
 
             .topic-sidebar-nav .nav-link:hover {
-                background-color: rgba(255, 255, 255, 0.15) !important;
+                background-color: rgba(255, 255, 255, 0.1) !important;
                 transform: translateX(5px);
             }
 
             .topic-sidebar-nav .nav-link.active {
-                background-color: rgba(255, 255, 255, 0.3) !important;
+                background-color: rgba(76, 29, 149, 0.5) !important;  /* semi-transparent purple */
+                transform: translateX(5px);
             }
 
             /* Remove any previous nav-link styles that might conflict */
@@ -336,8 +337,12 @@ app.index_string = '''
                 background: none !important;
             }
 
+            .nav-pills .nav-link:hover {
+                background-color: rgba(255, 255, 255, 0.1) !important;
+            }
+
             .nav-pills .nav-link.active {
-                background-color: rgba(255, 255, 255, 0.3) !important;
+                background-color: rgba(76, 29, 149, 0.5) !important;  /* semi-transparent purple */
             }
         </style>
     </head>
