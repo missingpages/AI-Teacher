@@ -6,3 +6,8 @@ With the rise of online education platforms , we see more people pursuing their 
 Our attempt here, as part of LLM Agents hackathon by Berkeley RDI, is to impart human elements of traditional teaching to online learning process with a virtual teacher aka socratic AI teacher. The socratic AI teacher is an agentic framework to augment the online learning with socratic teaching methods and personalized engagement.
 
 ### Pre-requisites
+Requires access to
+- Neo4j
+- LLM APIs
+
+python>3.10
