@@ -10,4 +10,8 @@ Requires access to
 - Neo4j
 - LLM APIs
 
-python>3.10
+## Instructions
+- create conda env or python venv
+- Run 'requirements.txt'
+- To create Knowledge base with learning materials(pdfs):
+    - Run "python kb/data_pipeline.py"
