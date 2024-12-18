@@ -16,6 +16,9 @@ Requires access to
 - ensure neo4j credentials are entered in 'neo4j-local.txt'
 - set proper LLM key set in python env.
   - For eg. to access openAI LLM gpt-40-mini ,set OPENAI_API_KEY
+
+- OPTIONAL : Change user persona details in profile/student.json
+ - One persona will be randomly picked & assumed for the student
     
 - To create Knowledge base with learning materials(pdfs):
     - Run "python kb/data_pipeline.py <pdf_path>"
