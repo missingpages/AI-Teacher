@@ -8,7 +8,7 @@ Our attempt here, as part of LLM Agents hackathon by Berkeley RDI, is to impart 
 ### Pre-requisites
 Requires access to
 - Neo4j
-- LLM APIs (by default requires openAI gpt-4o-mini)
+- LLM APIs (by default requires openAI gpt-4o-mini for agents, Gemini for Data extraction)
 
 ## Instructions
 - create conda env or python venv
