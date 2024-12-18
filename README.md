@@ -8,12 +8,13 @@ Our attempt here, as part of LLM Agents hackathon by Berkeley RDI, is to impart 
 ### Pre-requisites
 Requires access to
 - Neo4j
-- LLM APIs
+- LLM APIs (by default uses openAI gpt-40-mini)
 
 ## Instructions
 - create conda env or python venv
 - Run 'requirements.txt'
 - ensure neo4j credentials are entered in 'neo4j-local.txt'
+- set proper LLM key set in python env. For eg. to access openAI LLM gpt-40-mini ,set OPENAI_API_KEY
 - To create Knowledge base with learning materials(pdfs):
     - Run "python kb/data_pipeline.py <pdf_path>"
       This will extract all the contents from pdf, discover concepts, create concept hierarchy and then load to Neo4j. Also creates vector embedding for concept.
