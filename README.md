@@ -13,5 +13,14 @@ Requires access to
 ## Instructions
 - create conda env or python venv
 - Run 'requirements.txt'
+- ensure neo4j credentials are entered in 'neo4j-local.txt'
 - To create Knowledge base with learning materials(pdfs):
-    - Run "python kb/data_pipeline.py"
+    - Run "python kb/data_pipeline.py <pdf_path>"
+      This will extract all the contents from pdf, discover concepts, create concept hierarchy and then load to Neo4j. Also creates vector embedding for concept.
+
+- To start backend api server
+  - Run "python api.py"
+ 
+- To start GUI
+  - Run "python app.py"
+    - This will brigng up the UI to access the learning content
