@@ -26,7 +26,8 @@ Requires access to
 - Run 'requirements.txt'
 - ensure neo4j credentials are entered in 'neo4j-local.txt'
 - set OpenAI API key as an environment variable OPENAI_API_KEY.
-- 
+- set Google API key as an environment variable GEMINI_API_KEY.
+  
 - OPTIONAL : Change user persona details in profile/student.json
   One persona will be randomly picked & assumed for the student
     
@@ -38,6 +39,7 @@ Requires access to
 - To start backend api server
   - cd into src
   - Run "python api.py"
+    The backend api service will be available at http://127.0.0.1:5000
  
 - To start GUI
   - cd into src
