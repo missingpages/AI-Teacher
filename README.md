@@ -32,7 +32,8 @@ Requires access to
   One persona will be randomly picked & assumed for the student
     
 - To create Knowledge base with learning materials(pdfs):
-    - Run "python kb/data_pipeline.py <pdf_path>"
+    - cd kb
+    - Run "python data_pipeline.py <pdf_path>"
       This will extract all the contents from pdf, discover concepts, create concept hierarchy and then load to Neo4j. Also creates vector embedding for concept.
 
 - To start backend api server
