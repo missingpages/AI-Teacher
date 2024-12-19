@@ -1,4 +1,4 @@
-# Socratix : Socratic AI-Teacher
+# Socratix - Socratic AI Teacher
 Socratic Teacher is one who fosters critical thinking in students through engaging with students in thought provoking dialogue, Understand the students’ beliefs ,opinions and misconceptions with probing questions and help them find answers on their own. The teacher helps students discover truths and refine their understanding, making learning more personal and profound.
 
 With the rise of online education platforms , we see more people pursuing their learning goals through MOOC. Online courses democratize education by providing access to high-quality content from world-renowned institutions and experts and offers flexibility. However the downside is the lack of one-one engagement we used to have with teachers in class rooms. The future of education lie in middle ground between the two, offering both flexibility and personalized engagement.
