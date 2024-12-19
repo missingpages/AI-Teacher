@@ -35,6 +35,7 @@ Requires access to
     - cd into src/kb
     - Run "python data_pipeline.py <pdf_path>"
       This will extract all the contents from pdf, discover concepts, create concept hierarchy and then load to Neo4j. Also creates vector embedding for concept.
+    - Sample pdf files used in demo are available in **sample-data** folder
 
 - To start backend api server
   - cd into src
