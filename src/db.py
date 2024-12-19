@@ -7,7 +7,7 @@ import os
 
 # Neo4j connection setup
 from dotenv import load_dotenv
-load_dotenv('kb/neo4j-local.txt')
+load_dotenv('neo4j.txt')
 
 # Set credentials from environment variables
 uri = os.getenv('NEO4J_URI')
