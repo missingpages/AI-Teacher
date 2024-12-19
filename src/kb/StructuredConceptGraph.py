@@ -2,8 +2,6 @@
 # coding: utf-8
 
 import google.generativeai as genai
-import os
-import fitz
 from langchain_core.output_parsers import JsonOutputParser
 from openai import OpenAI
 from langchain_core.pydantic_v1 import BaseModel, Field 
@@ -23,29 +21,20 @@ class Concept(BaseModel):
 class ConceptGraph(BaseModel):
     graph: list[Concept] = Field(description="The dict of all concepts found in the topic and its details")
 
-def load_neo4j_credentials():
-    """Load Neo4j credentials from file"""
-    print("Loading Neo4j credentials...")
+def get_neo4j_credentials():
+    """Read Neo4j credentials from config file"""
     credentials = {}
-    try:
-        with open('neo4j-local.txt', 'r') as f:
-            for line in f:
-                key, value = line.strip().split('=')
-                credentials[key] = value
-        print("✓ Credentials loaded successfully")
-        return credentials
-    except FileNotFoundError:
-        print("❌ Error: neo4j-local.txt file not found")
-        raise
-    except Exception as e:
-        print(f"❌ Error loading credentials: {str(e)}")
-        raise
+    with open('../neo4j.txt', 'r') as f:
+        for line in f:
+            key, value = line.strip().split('=')
+            credentials[key] = value
+    return credentials
 
 def get_neo4j_driver():
     """Create and return Neo4j driver using credentials"""
     print("Initializing Neo4j connection...")
     try:
-        credentials = load_neo4j_credentials()
+        credentials = get_neo4j_credentials()
         driver = neo4j.GraphDatabase.driver(
             credentials['NEO4J_URI'],
             auth=neo4j.basic_auth(credentials['NEO4J_USERNAME'], credentials['NEO4J_PASSWORD'])

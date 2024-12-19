@@ -3,16 +3,21 @@
 
 import google.generativeai as genai
 import os
-import fitz
-import getpass
+#import fitz
+#import getpass
 from langchain_core.output_parsers import JsonOutputParser
 import neo4j
 
+
 def initialize_gemini():
-    """Initialize and configure Gemini API"""
-    os.environ["API_KEY"] = getpass.getpass(prompt = 'Enter the Gemini API key')
-    genai.configure(api_key=os.environ["API_KEY"])
+    """Initialize Gemini AI model"""
+    #os.environ["API_KEY"] = api_key
+    if os.environ.get("GEMINI_API_KEY") is None:
+        raise Exception("Please set the GEMINI_API_KEY environment variable")
+    
+    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     return genai.GenerativeModel(model_name='gemini-1.5-pro')
+
 
 def extract_toc_from_pdf(model, pdf_path):
     """Extract table of contents from PDF using Gemini"""
@@ -95,7 +100,7 @@ def clean_property_value(value):
 def get_neo4j_credentials():
     """Read Neo4j credentials from config file"""
     credentials = {}
-    with open('neo4j-local.txt', 'r') as f:
+    with open('../neo4j.txt', 'r') as f:
         for line in f:
             key, value = line.strip().split('=')
             credentials[key] = value
@@ -264,7 +269,7 @@ def main(pdf_path):
         primary_key='sub_section_name'
     )
     
-    print("\n✅ TOC extraction and knowledge graph creation completed successfully!")
+    print("\nTOC extraction and knowledge graph creation completed successfully!")
 
 if __name__ == "__main__":
     import sys

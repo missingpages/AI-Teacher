@@ -137,7 +137,7 @@ def create_vector_index(driver, index_name, label, property_name, dimensions=153
 
 def main():
     # Initialize configurations and clients
-    config = load_neo4j_config('neo4j-local.txt')
+    config = load_neo4j_config('../neo4j.txt')
     driver = init_neo4j_driver(
         config['NEO4J_URI'],
         config['NEO4J_USERNAME'],

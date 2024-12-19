@@ -55,6 +55,7 @@ def main(pdf_path):
     print("\n📚 Starting PDF Processing Pipeline")
     print(f"Input PDF: {pdf_path}")
     
+    
     # Step 1: Extract Table of Contents
     print("\n📑 Step 1/4: Extracting Table of Contents")
     if not run_script("TOCExtractor.py", pdf_path):

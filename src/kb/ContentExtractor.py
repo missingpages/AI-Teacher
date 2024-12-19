@@ -3,13 +3,12 @@
 
 import google.generativeai as genai
 import os
-import fitz
 from langchain_core.output_parsers import JsonOutputParser
 import neo4j
 import time
 import argparse
 
-def load_neo4j_config(config_file="neo4j-local.txt"):
+def load_neo4j_config(config_file="../neo4j.txt"):
     """Load Neo4j credentials from config file"""
     config = {}
     with open(config_file, 'r') as f:
@@ -18,10 +17,13 @@ def load_neo4j_config(config_file="neo4j-local.txt"):
             config[key] = value
     return config
 
-def initialize_gemini(api_key):
+def initialize_gemini():
     """Initialize Gemini AI model"""
-    os.environ["API_KEY"] = api_key
-    genai.configure(api_key=os.environ["API_KEY"])
+    #os.environ["API_KEY"] = api_key
+    if os.environ.get("GEMINI_API_KEY") is None:
+        raise Exception("Please set the GEMINI_API_KEY environment variable")
+    
+    genai.configure(api_key=os.environ["GEMINI_API_KEY"])
     return genai.GenerativeModel(model_name='gemini-2.0-flash-exp')
 
 def execute_query(query, uri, username, password):
@@ -120,10 +122,10 @@ def main(pdf_path):
     neo4j_config = load_neo4j_config()
     
     # Get Gemini API key
-    api_key = input('Enter the Gemini API key: ')
+    #api_key = input('Enter the Gemini API key: ')
     
     # Initialize Gemini model
-    model = initialize_gemini(api_key)
+    model = initialize_gemini()
     
     # Update sections with content
     update_sections_with_content(

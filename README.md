@@ -25,9 +25,8 @@ Requires access to
 - create conda env or python venv
 - Run 'requirements.txt'
 - ensure neo4j credentials are entered in 'neo4j-local.txt'
-- set proper LLM key set in python env.
-  - For eg. to access openAI LLM gpt-40-mini ,set OPENAI_API_KEY
-
+- set OpenAI API key as an environment variable OPENAI_API_KEY.
+- 
 - OPTIONAL : Change user persona details in profile/student.json
   One persona will be randomly picked & assumed for the student
     

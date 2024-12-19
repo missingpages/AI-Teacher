@@ -12,6 +12,15 @@ CORS(app)  # Enable CORS for all routes
 # Add this to store chat messages (in a real app, you'd use a database)
 chat_messages = []
 
+def get_neo4j_credentials():
+    """Read Neo4j credentials from config file"""
+    credentials = {}
+    with open('neo4j.txt', 'r') as f:
+        for line in f:
+            key, value = line.strip().split('=')
+            credentials[key] = value
+    return credentials
+
 def execute_neo4j_query(cypher_query: str, parameters: dict = None) -> List[Dict[str, Any]]:
     """
     Execute a Cypher query on Neo4j database and return the results.
@@ -24,9 +33,13 @@ def execute_neo4j_query(cypher_query: str, parameters: dict = None) -> List[Dict
         List[Dict[str, Any]]: List of results where each result is a dictionary
     """
     # Database credentials
-    URI = "neo4j+s://a83594c4.databases.neo4j.io"
-    USERNAME = "neo4j"
-    PASSWORD = "nXh9u6nEUPJKLVnyuzxe7NDgeCVJCYBoFX1NDJan9pw"
+    # URI = "neo4j+s://a83594c4.databases.neo4j.io"
+    # USERNAME = "neo4j"
+    # PASSWORD = "nXh9u6nEUPJKLVnyuzxe7NDgeCVJCYBoFX1NDJan9pw"
+    credentials = get_neo4j_credentials()
+    URI = credentials.get('NEO4J_URI')
+    USERNAME = credentials.get('NEO4J_USERNAME')
+    PASSWORD = credentials.get('NEO4J_PASSWORD')
     
     # Initialize the results list
     results = []
