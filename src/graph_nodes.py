@@ -30,8 +30,13 @@ def chatbot(state: State):
     profile_message = {"role": "system", "content": f"""
                         The student you are talking to is {persona['name']}. Here is their profile:
                         {json.dumps(persona, indent=4)}
-
+                          
                         Formulate your responses in a way that engages the student and aligns with their learning style, weaknesses, and strengths, current knowledge, interests, and goals.
+                        you have access to the following tools:
+                        1. QuestionCreator: This tool is used to create one or more questions based on the foundation concepts and the content of the topic.
+                        2. FoundationConceptFetcher: This tool is used to get the related concepts and prerequisites for the topic.
+                        3. PersonalizedNarrator: This tool is used to create a personalized narration based on the student's profile.
+                
                         """}
     sys_message = {"role": "system", "content": f"""
                    {AI_TEACHER_PROMPT}
@@ -44,7 +49,7 @@ def chatbot(state: State):
     tools = [QuestionCreator, FoundationConceptFetcher, PersonalizedNarrator]
     llm_with_tools = llm.bind_tools(tools)
     response = llm_with_tools.invoke(messages) 
-    print("response is", response)
+    # print("response is", response)
     return {"messages": [response]} 
 
 

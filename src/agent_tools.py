@@ -7,7 +7,12 @@ from langgraph.prebuilt import ToolNode
 from langchain.pydantic_v1 import BaseModel, Field
 from langchain.tools import BaseTool, StructuredTool, tool
 from db import driver
-
+from prompts import QUERY_CREATOR_PROMPT, PERSONALIZED_NARRATOR_PROMPT
+from langchain_openai import ChatOpenAI
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
 
 class FoundationConceptFetcher(BaseModel):
     """

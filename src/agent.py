@@ -1,7 +1,8 @@
 from graph_builder import build_graph
 from prompts import *
 from langgraph.checkpoint.memory import MemorySaver
-
+from agent_tools import *
+from prompts import PERSONALIZED_NARRATOR_PROMPT
 
 import json
 from random import choice
@@ -46,7 +47,9 @@ def agent(message: str, context: dict={}):
     user_message = {"role": "user", "content": message}
     msg = {"messages": [topic, user_message]}
     response = graph.invoke(msg,{"configurable": {"thread_id": "1"}})
-    print("response is", response)
+    # print("response is", response)
     response = response["messages"][-1].content
-    # print("agent response is", response)
-    return response 
+    print("----------- response is--------", response)  
+    personality = {json.dumps(persona, indent=4)}
+    personalized_narration = create_personalized_narration(response, personality)
+    return personalized_narration 

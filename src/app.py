@@ -561,12 +561,12 @@ def create_topic_content(chapter_name, current_topic, prev_topic, next_topic):
                     'whiteSpace': 'pre-wrap',
                     'fontFamily': "'Ubuntu', sans-serif",
                     'textAlign': 'justify',
-                    'padding': '0 1rem'
+                    'padding': '0 2rem'
                 }
             ),
             className="topic-card",
             style={
-                'padding': '2rem',
+                'padding': '3rem',
                 'backgroundColor': 'white',
                 'borderRadius': '10px',
                 'boxShadow': '0 4px 6px rgba(0, 0, 0, 0.1)',
@@ -614,7 +614,9 @@ def update_chat(n_clicks, message, data):
                                 'color': 'white',
                                 'borderRadius': '10px',
                                 'maxWidth': '80%',
-                                'marginLeft': 'auto'
+                                'marginLeft': 'auto',
+                                'fontSize': '0.9rem',
+                                'marginBottom': '5px'  # Space between user and AI message
                             }
                         ),
                         html.Div(
@@ -627,7 +629,9 @@ def update_chat(n_clicks, message, data):
                                 'backgroundColor': '#4c1d95',
                                 'color': 'white',
                                 'borderRadius': '10px',
-                                'maxWidth': '80%'
+                                'maxWidth': '80%',
+                                'fontSize': '0.9rem',
+                                'marginBottom': '20px'  # Increased space after AI message
                             }
                         )
                     ])
