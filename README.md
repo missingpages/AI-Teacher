@@ -40,4 +40,5 @@ Requires access to
  
 - To start GUI
   - Run "python app.py"
-    - This will brigng up the UI to access the learning content
+    - This will bring up the UI to access the learning content
+    - The UI can be accessed through the url - http://127.0.0.1:8050
