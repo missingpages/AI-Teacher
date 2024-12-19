@@ -7,6 +7,10 @@ Our attempt here, as part of LLM Agents hackathon by Berkeley RDI, is to impart 
 ## Features
 ### 1. Personalized teaching
 ![Personalization](images/PersonalizedTeaching-eg.png)
+
+### 2. Socratic Teaching
+![Personalization](images/foundationConcepts-eg.png)
+For eg. To know the concept of 'electric flux', understanding of 'electric field' is important!
     
 ### Pre-requisites
 Requires access to
