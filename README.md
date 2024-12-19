@@ -16,7 +16,7 @@ For eg. To know the concept of **'electric flux'**, understanding of **'electric
 
 Ofcourse, the response is personalized to students likings towards **poetry**!
     
-### Pre-requisites
+## Pre-requisites
 Requires access to
 - Neo4j
 - LLM APIs (by default requires openAI gpt-4o-mini for agents, Gemini for Data extraction)
