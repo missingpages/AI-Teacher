@@ -12,7 +12,7 @@ Our attempt here, as part of LLM Agents hackathon by Berkeley RDI, is to impart 
 <img src="images/foundationConcepts-eg.png" alt="Socratic" width="250" height="500">
 
 
-For eg. To know the concept of 'electric flux', understanding of 'electric field' is important! Ofcourse, the response is personalized to students likings towards poetry!
+For eg. To know the concept of **'electric flux'**, understanding of **'electric field'** is important! Ofcourse, the response is personalized to students likings towards **poetry**!
     
 ### Pre-requisites
 Requires access to
