@@ -37,6 +37,7 @@ Requires access to
 
 - To start backend api server
   - Run "python api.py"
+  - The api services for UI app will be available at http://127.0.0.1:5000
  
 - To start GUI
   - Run "python app.py"
