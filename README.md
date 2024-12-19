@@ -32,12 +32,15 @@ Requires access to
   One persona will be randomly picked & assumed for the student
     
 - To create Knowledge base with learning materials(pdfs):
-    - Run "python kb/data_pipeline.py <pdf_path>"
+    - cd kb
+    - Run "python data_pipeline.py <pdf_path>"
       This will extract all the contents from pdf, discover concepts, create concept hierarchy and then load to Neo4j. Also creates vector embedding for concept.
 
 - To start backend api server
   - Run "python api.py"
+  - The api services for UI app will be available at http://127.0.0.1:5000
  
 - To start GUI
   - Run "python app.py"
-    - This will brigng up the UI to access the learning content
+    - This will bring up the UI to access the learning content
+    - The UI can be accessed through the url - http://127.0.0.1:8050
